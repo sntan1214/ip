@@ -16,70 +16,186 @@ public class Lebron {
 
         while (!input.equals("bye")) {
 
+            // LIST
             if (input.equals("list")) {
 
                 for (int i = 0; i < taskCount; i++) {
                     System.out.println((i + 1) + ". " + tasks[i]);
                 }
 
-            } else if (input.startsWith("mark ")) {
+                // MARK
+            } else if (input.equals("mark") || input.startsWith("mark ")) {
 
-                int taskNumber = Integer.parseInt(input.substring(5));
+                if (input.equals("mark")) {
+                    System.out.println(
+                            "Lebron: Tell me which task number to mark!"
+                    );
 
-                tasks[taskNumber - 1].markAsDone();
+                } else {
+                    try {
+                        int taskNumber =
+                                Integer.parseInt(input.substring(5));
 
-                System.out.println("Nice! I've marked this task as done:");
-                System.out.println(tasks[taskNumber - 1]);
+                        if (taskNumber < 1 || taskNumber > taskCount) {
+                            System.out.println(
+                                    "Lebron: That task number doesn't exist!"
+                            );
 
-            } else if (input.startsWith("todo ")) {
+                        } else {
+                            tasks[taskNumber - 1].markAsDone();
 
-                String description = input.substring(5);
+                            System.out.println(
+                                    "Nice! I've marked this task as done:"
+                            );
+                            System.out.println(
+                                    tasks[taskNumber - 1]
+                            );
+                        }
 
-                tasks[taskCount] = new Todo(description);
+                    } catch (NumberFormatException e) {
+                        System.out.println(
+                                "Lebron: Please give me a valid task number!"
+                        );
+                    }
+                }
 
-                System.out.println("Got it. I've added this task:");
-                System.out.println(tasks[taskCount]);
+                // TODO
+            } else if (input.equals("todo")
+                    || input.startsWith("todo ")) {
 
-                taskCount++;
+                String description;
 
-            } else if (input.startsWith("deadline ")) {
+                if (input.length() > 4) {
+                    description = input.substring(4).trim();
+                } else {
+                    description = "";
+                }
 
-                String[] parts = input.substring(9).split(" /by ", 2);
+                if (description.isEmpty()) {
+                    System.out.println(
+                            "Lebron: You gotta tell me what the todo is!"
+                    );
 
-                String description = parts[0];
-                String by = parts[1];
+                } else {
+                    tasks[taskCount] = new Todo(description);
 
-                tasks[taskCount] = new Deadline(description, by);
+                    System.out.println(
+                            "Got it. I've added this task:"
+                    );
+                    System.out.println(tasks[taskCount]);
 
-                System.out.println("Got it. I've added this task:");
-                System.out.println(tasks[taskCount]);
+                    taskCount++;
+                }
 
-                taskCount++;
+                // DEADLINE
+            } else if (input.equals("deadline")
+                    || input.startsWith("deadline ")) {
 
-            } else if (input.startsWith("event ")) {
+                int byIndex = input.indexOf(" /by ");
 
-                String eventInfo = input.substring(6);
+                if (byIndex == -1) {
+                    System.out.println(
+                            "Lebron: A deadline needs a /by time!"
+                    );
 
-                String[] fromParts = eventInfo.split(" /from ", 2);
+                } else {
 
-                String description = fromParts[0];
+                    String description =
+                            input.substring(9, byIndex).trim();
 
-                String[] toParts = fromParts[1].split(" /to ", 2);
+                    String by =
+                            input.substring(byIndex + 5).trim();
 
-                String from = toParts[0];
-                String to = toParts[1];
+                    if (description.isEmpty()) {
+                        System.out.println(
+                                "Lebron: A deadline needs a description!"
+                        );
 
-                tasks[taskCount] = new Event(description, from, to);
+                    } else if (by.isEmpty()) {
+                        System.out.println(
+                                "Lebron: You gotta tell me when it's due!"
+                        );
 
-                System.out.println("Got it. I've added this task:");
-                System.out.println(tasks[taskCount]);
+                    } else {
+                        tasks[taskCount] =
+                                new Deadline(description, by);
 
-                taskCount++;
+                        System.out.println(
+                                "Got it. I've added this task:"
+                        );
+                        System.out.println(tasks[taskCount]);
+
+                        taskCount++;
+                    }
+                }
+
+                // EVENT
+            } else if (input.equals("event")
+                    || input.startsWith("event ")) {
+
+                int fromIndex = input.indexOf(" /from ");
+                int toIndex = input.indexOf(" /to ");
+
+                if (fromIndex == -1
+                        || toIndex == -1
+                        || toIndex < fromIndex) {
+
+                    System.out.println(
+                            "Lebron: An event needs both /from and /to!"
+                    );
+
+                } else {
+
+                    String description =
+                            input.substring(6, fromIndex).trim();
+
+                    String from =
+                            input.substring(
+                                    fromIndex + 7,
+                                    toIndex
+                            ).trim();
+
+                    String to =
+                            input.substring(toIndex + 5).trim();
+
+                    if (description.isEmpty()) {
+                        System.out.println(
+                                "Lebron: An event needs a description!"
+                        );
+
+                    } else if (from.isEmpty() || to.isEmpty()) {
+                        System.out.println(
+                                "Lebron: Tell me when the event starts and ends!"
+                        );
+
+                    } else {
+                        tasks[taskCount] =
+                                new Event(description, from, to);
+
+                        System.out.println(
+                                "Got it. I've added this task:"
+                        );
+                        System.out.println(tasks[taskCount]);
+
+                        taskCount++;
+                    }
+                }
+
+                // UNKNOWN COMMAND
+            } else {
+
+                System.out.println(
+                        "Lebron: I don't know that command."
+                );
             }
 
             input = scanner.nextLine();
         }
 
-        System.out.println("That's game. See you next time!");
+        System.out.println(
+                "That's game. See you next time!"
+        );
+
+        scanner.close();
     }
 }
