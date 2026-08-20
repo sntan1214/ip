@@ -47,8 +47,59 @@ public class Lebron {
                             System.out.println(
                                     "Nice! I've marked this task as done:"
                             );
+                            System.out.println(tasks[taskNumber - 1]);
+                        }
+
+                    } catch (NumberFormatException e) {
+                        System.out.println(
+                                "Lebron: Please give me a valid task number!"
+                        );
+                    }
+                }
+
+                // DELETE
+            } else if (input.equals("delete")
+                    || input.startsWith("delete ")) {
+
+                if (input.equals("delete")) {
+                    System.out.println(
+                            "Lebron: Tell me which task number to delete!"
+                    );
+
+                } else {
+                    try {
+                        int taskNumber =
+                                Integer.parseInt(input.substring(7));
+
+                        if (taskNumber < 1 || taskNumber > taskCount) {
                             System.out.println(
-                                    tasks[taskNumber - 1]
+                                    "Lebron: That task number doesn't exist!"
+                            );
+
+                        } else {
+
+                            Task deletedTask =
+                                    tasks[taskNumber - 1];
+
+                            for (int i = taskNumber - 1;
+                                 i < taskCount - 1;
+                                 i++) {
+
+                                tasks[i] = tasks[i + 1];
+                            }
+
+                            tasks[taskCount - 1] = null;
+                            taskCount--;
+
+                            System.out.println(
+                                    "Alright, I've removed this task:"
+                            );
+                            System.out.println(deletedTask);
+
+                            System.out.println(
+                                    "Now you have "
+                                            + taskCount
+                                            + " tasks in the list."
                             );
                         }
 
