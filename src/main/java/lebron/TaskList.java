@@ -77,4 +77,17 @@ public class TaskList {
 
         return deletedTask;
     }
+
+    public TaskList find(String keyword) {
+        TaskList matchingTasks = new TaskList();
+
+        for (int i = 0; i < taskCount; i++) {
+            if (tasks[i].description.toLowerCase()
+                    .contains(keyword.toLowerCase())) {
+                matchingTasks.add(tasks[i]);
+            }
+        }
+
+        return matchingTasks;
+    }
 }

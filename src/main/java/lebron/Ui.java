@@ -21,7 +21,7 @@ public class Ui {
      * Displays the greeting message when the chatbot starts.
      */
     public void showGreeting() {
-        System.out.println("Hello! I'm lebron.Lebron");
+        System.out.println("Hello! I'm Lebron");
         System.out.println("What can I do for you?");
     }
 
@@ -104,6 +104,19 @@ public class Ui {
         System.out.println(
                 "That's game. See you next time!"
         );
+    }
+
+    /**
+     * Displays the tasks that match the user's search keyword.
+     *
+     * @param tasks task list containing the matching tasks
+     */
+    public void showMatchingTasks(TaskList tasks) {
+        System.out.println("Here are the matching tasks in your list:");
+
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println((i + 1) + ". " + tasks.get(i));
+        }
     }
 
     /**
