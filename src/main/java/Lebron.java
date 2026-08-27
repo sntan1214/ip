@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 public class Lebron {
@@ -19,6 +20,10 @@ public class Lebron {
             System.out.println(
                     "Lebron: I couldn't load your saved tasks."
             );
+        } catch (DateTimeParseException e) {
+            System.out.println(
+                    "Lebron: One of your saved dates is invalid."
+            );
         }
 
         System.out.println("Hello! I'm Lebron");
@@ -32,7 +37,9 @@ public class Lebron {
             if (input.equals("list")) {
 
                 for (int i = 0; i < taskCount; i++) {
-                    System.out.println((i + 1) + ". " + tasks[i]);
+                    System.out.println(
+                            (i + 1) + ". " + tasks[i]
+                    );
                 }
 
                 // MARK
@@ -50,7 +57,9 @@ public class Lebron {
                     try {
 
                         int taskNumber =
-                                Integer.parseInt(input.substring(5));
+                                Integer.parseInt(
+                                        input.substring(5)
+                                );
 
                         if (taskNumber < 1
                                 || taskNumber > taskCount) {
@@ -72,7 +81,10 @@ public class Lebron {
                             );
 
                             try {
-                                storage.saveTasks(tasks, taskCount);
+                                storage.saveTasks(
+                                        tasks,
+                                        taskCount
+                                );
                             } catch (IOException e) {
                                 System.out.println(
                                         "Lebron: I couldn't save your tasks."
@@ -103,7 +115,9 @@ public class Lebron {
                     try {
 
                         int taskNumber =
-                                Integer.parseInt(input.substring(7));
+                                Integer.parseInt(
+                                        input.substring(7)
+                                );
 
                         if (taskNumber < 1
                                 || taskNumber > taskCount) {
@@ -140,7 +154,10 @@ public class Lebron {
                             );
 
                             try {
-                                storage.saveTasks(tasks, taskCount);
+                                storage.saveTasks(
+                                        tasks,
+                                        taskCount
+                                );
                             } catch (IOException e) {
                                 System.out.println(
                                         "Lebron: I couldn't save your tasks."
@@ -191,7 +208,10 @@ public class Lebron {
                     taskCount++;
 
                     try {
-                        storage.saveTasks(tasks, taskCount);
+                        storage.saveTasks(
+                                tasks,
+                                taskCount
+                        );
                     } catch (IOException e) {
                         System.out.println(
                                 "Lebron: I couldn't save your tasks."
@@ -209,16 +229,21 @@ public class Lebron {
                 if (byIndex == -1) {
 
                     System.out.println(
-                            "Lebron: A deadline needs a /by time!"
+                            "Lebron: A deadline needs a /by date!"
                     );
 
                 } else {
 
                     String description =
-                            input.substring(9, byIndex).trim();
+                            input.substring(
+                                    9,
+                                    byIndex
+                            ).trim();
 
                     String by =
-                            input.substring(byIndex + 5).trim();
+                            input.substring(
+                                    byIndex + 5
+                            ).trim();
 
                     if (description.isEmpty()) {
 
@@ -234,24 +259,39 @@ public class Lebron {
 
                     } else {
 
-                        tasks[taskCount] =
-                                new Deadline(description, by);
-
-                        System.out.println(
-                                "Got it. I've added this task:"
-                        );
-
-                        System.out.println(
-                                tasks[taskCount]
-                        );
-
-                        taskCount++;
-
                         try {
-                            storage.saveTasks(tasks, taskCount);
-                        } catch (IOException e) {
+
+                            tasks[taskCount] =
+                                    new Deadline(
+                                            description,
+                                            by
+                                    );
+
                             System.out.println(
-                                    "Lebron: I couldn't save your tasks."
+                                    "Got it. I've added this task:"
+                            );
+
+                            System.out.println(
+                                    tasks[taskCount]
+                            );
+
+                            taskCount++;
+
+                            try {
+                                storage.saveTasks(
+                                        tasks,
+                                        taskCount
+                                );
+                            } catch (IOException e) {
+                                System.out.println(
+                                        "Lebron: I couldn't save your tasks."
+                                );
+                            }
+
+                        } catch (DateTimeParseException e) {
+
+                            System.out.println(
+                                    "Lebron: Please enter the date as yyyy-MM-dd!"
                             );
                         }
                     }
@@ -278,7 +318,10 @@ public class Lebron {
                 } else {
 
                     String description =
-                            input.substring(6, fromIndex).trim();
+                            input.substring(
+                                    6,
+                                    fromIndex
+                            ).trim();
 
                     String from =
                             input.substring(
@@ -287,7 +330,9 @@ public class Lebron {
                             ).trim();
 
                     String to =
-                            input.substring(toIndex + 5).trim();
+                            input.substring(
+                                    toIndex + 5
+                            ).trim();
 
                     if (description.isEmpty()) {
 
@@ -322,7 +367,10 @@ public class Lebron {
                         taskCount++;
 
                         try {
-                            storage.saveTasks(tasks, taskCount);
+                            storage.saveTasks(
+                                    tasks,
+                                    taskCount
+                            );
                         } catch (IOException e) {
                             System.out.println(
                                     "Lebron: I couldn't save your tasks."
