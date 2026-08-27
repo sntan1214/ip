@@ -8,25 +8,28 @@ public class Storage {
     private final Path filePath;
 
     public Storage(String folderName, String fileName) {
-        this.filePath = Path.of(folderName, fileName);
+        this.filePath =
+                Path.of(folderName, fileName);
     }
 
-    public int loadTasks(Task[] tasks) throws IOException {
+    public TaskList loadTasks() throws IOException {
 
-        // Create the folder if it does not exist
         if (filePath.getParent() != null) {
-            Files.createDirectories(filePath.getParent());
+            Files.createDirectories(
+                    filePath.getParent()
+            );
         }
 
-        // Create the file if it does not exist
         if (!Files.exists(filePath)) {
             Files.createFile(filePath);
-            return 0;
+            return new TaskList();
         }
 
-        List<String> lines = Files.readAllLines(filePath);
+        List<String> lines =
+                Files.readAllLines(filePath);
 
-        int taskCount = 0;
+        TaskList tasks =
+                new TaskList();
 
         for (String line : lines) {
 
@@ -34,32 +37,38 @@ public class Storage {
                 continue;
             }
 
-            String[] parts = line.split(" \\| ", -1);
+            String[] parts =
+                    line.split(" \\| ", -1);
 
-            String taskType = parts[0];
-            boolean isDone = parts[1].equals("1");
+            String taskType =
+                    parts[0];
+
+            boolean isDone =
+                    parts[1].equals("1");
 
             Task task;
 
             if (taskType.equals("T")) {
 
-                String description = parts[2];
-                task = new Todo(description);
+                task =
+                        new Todo(parts[2]);
 
             } else if (taskType.equals("D")) {
 
-                String description = parts[2];
-                String by = parts[3];
-
-                task = new Deadline(description, by);
+                task =
+                        new Deadline(
+                                parts[2],
+                                parts[3]
+                        );
 
             } else if (taskType.equals("E")) {
 
-                String description = parts[2];
-                String from = parts[3];
-                String to = parts[4];
-
-                task = new Event(description, from, to);
+                task =
+                        new Event(
+                                parts[2],
+                                parts[3],
+                                parts[4]
+                        );
 
             } else {
                 continue;
@@ -69,25 +78,31 @@ public class Storage {
                 task.markAsDone();
             }
 
-            tasks[taskCount] = task;
-            taskCount++;
+            tasks.add(task);
         }
 
-        return taskCount;
+        return tasks;
     }
 
-    public void saveTasks(Task[] tasks, int taskCount) throws IOException {
+    public void saveTasks(TaskList tasks)
+            throws IOException {
 
         if (filePath.getParent() != null) {
-            Files.createDirectories(filePath.getParent());
+            Files.createDirectories(
+                    filePath.getParent()
+            );
         }
 
-        StringBuilder data = new StringBuilder();
+        StringBuilder data =
+                new StringBuilder();
 
-        for (int i = 0; i < taskCount; i++) {
+        for (int i = 0; i < tasks.size(); i++) {
 
-            Task task = tasks[i];
-            String done = task.isDone ? "1" : "0";
+            Task task =
+                    tasks.get(i);
+
+            String done =
+                    task.isDone ? "1" : "0";
 
             if (task instanceof Todo) {
 
@@ -98,7 +113,8 @@ public class Storage {
 
             } else if (task instanceof Deadline) {
 
-                Deadline deadline = (Deadline) task;
+                Deadline deadline =
+                        (Deadline) task;
 
                 data.append("D | ")
                         .append(done)
@@ -109,7 +125,8 @@ public class Storage {
 
             } else if (task instanceof Event) {
 
-                Event event = (Event) task;
+                Event event =
+                        (Event) task;
 
                 data.append("E | ")
                         .append(done)
@@ -121,9 +138,14 @@ public class Storage {
                         .append(event.to);
             }
 
-            data.append(System.lineSeparator());
+            data.append(
+                    System.lineSeparator()
+            );
         }
 
-        Files.writeString(filePath, data.toString());
+        Files.writeString(
+                filePath,
+                data.toString()
+        );
     }
 }
