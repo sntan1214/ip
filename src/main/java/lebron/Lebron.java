@@ -1,3 +1,5 @@
+package lebron;
+
 import java.io.IOException;
 import java.time.format.DateTimeParseException;
 
@@ -28,7 +30,7 @@ public class Lebron {
                  | DateTimeParseException e) {
 
             ui.showMessage(
-                    "Lebron: I couldn't load your saved tasks."
+                    "lebron.Lebron: I couldn't load your saved tasks."
             );
 
             tasks =
@@ -90,7 +92,7 @@ public class Lebron {
                 default:
 
                     ui.showMessage(
-                            "Lebron: I don't know that command."
+                            "lebron.Lebron: I don't know that command."
                     );
 
                     break;
@@ -112,7 +114,7 @@ public class Lebron {
                     || taskNumber > tasks.size()) {
 
                 ui.showMessage(
-                        "Lebron: That task number doesn't exist!"
+                        "lebron.Lebron: That task number doesn't exist!"
                 );
 
                 return;
@@ -128,7 +130,7 @@ public class Lebron {
         } catch (NumberFormatException e) {
 
             ui.showMessage(
-                    "Lebron: Please give me a valid task number!"
+                    "lebron.Lebron: Please give me a valid task number!"
             );
         }
     }
@@ -144,7 +146,7 @@ public class Lebron {
                     || taskNumber > tasks.size()) {
 
                 ui.showMessage(
-                        "Lebron: That task number doesn't exist!"
+                        "lebron.Lebron: That task number doesn't exist!"
                 );
 
                 return;
@@ -163,7 +165,7 @@ public class Lebron {
         } catch (NumberFormatException e) {
 
             ui.showMessage(
-                    "Lebron: Please give me a valid task number!"
+                    "lebron.Lebron: Please give me a valid task number!"
             );
         }
     }
@@ -184,7 +186,7 @@ public class Lebron {
         } catch (IllegalArgumentException e) {
 
             ui.showMessage(
-                    "Lebron: " + e.getMessage()
+                    "lebron.Lebron: " + e.getMessage()
             );
         }
     }
@@ -205,13 +207,13 @@ public class Lebron {
         } catch (DateTimeParseException e) {
 
             ui.showMessage(
-                    "Lebron: Please enter the date as yyyy-MM-dd!"
+                    "lebron.Lebron: Please enter the date as yyyy-MM-dd!"
             );
 
         } catch (IllegalArgumentException e) {
 
             ui.showMessage(
-                    "Lebron: " + e.getMessage()
+                    "lebron.Lebron: " + e.getMessage()
             );
         }
     }
@@ -232,7 +234,7 @@ public class Lebron {
         } catch (IllegalArgumentException e) {
 
             ui.showMessage(
-                    "Lebron: " + e.getMessage()
+                    "lebron.Lebron: " + e.getMessage()
             );
         }
     }
@@ -246,7 +248,7 @@ public class Lebron {
         } catch (IOException e) {
 
             ui.showMessage(
-                    "Lebron: I couldn't save your tasks."
+                    "lebron.Lebron: I couldn't save your tasks."
             );
         }
     }

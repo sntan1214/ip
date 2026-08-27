@@ -1,3 +1,5 @@
+package lebron;
+
 public class Parser {
 
     public String getCommand(String input) {
