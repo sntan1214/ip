@@ -5,15 +5,31 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+/**
+ * Handles saving tasks to and loading tasks from a data file.
+ */
 public class Storage {
 
     private final Path filePath;
 
+    /**
+     * Creates a storage object using the specified folder and file name.
+     *
+     * @param folderName name of the folder containing the data file
+     * @param fileName name of the file used to store tasks
+     */
     public Storage(String folderName, String fileName) {
         this.filePath =
                 Path.of(folderName, fileName);
     }
 
+    /**
+     * Loads tasks from the data file.
+     * Creates the required folder and file if they do not already exist.
+     *
+     * @return task list loaded from the data file
+     * @throws IOException if an error occurs while reading or creating the file
+     */
     public TaskList loadTasks() throws IOException {
 
         if (filePath.getParent() != null) {
@@ -86,6 +102,12 @@ public class Storage {
         return tasks;
     }
 
+    /**
+     * Saves all tasks in the given task list to the data file.
+     *
+     * @param tasks task list to save
+     * @throws IOException if an error occurs while writing to the file
+     */
     public void saveTasks(TaskList tasks)
             throws IOException {
 

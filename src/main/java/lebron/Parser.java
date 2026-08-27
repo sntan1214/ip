@@ -1,7 +1,17 @@
 package lebron;
 
+/**
+ * Parses user input into commands and task information
+ * that can be used by the Lebron chatbot.
+ */
 public class Parser {
 
+    /**
+     * Extracts the command word from the user's input.
+     *
+     * @param input full command entered by the user
+     * @return first word of the command, or an empty string if input is empty
+     */
     public String getCommand(String input) {
         String trimmedInput = input.trim();
 
@@ -12,6 +22,13 @@ public class Parser {
         return trimmedInput.split(" ", 2)[0];
     }
 
+    /**
+     * Extracts the task number from commands such as mark or delete.
+     *
+     * @param input full command entered by the user
+     * @return task number specified by the user
+     * @throws NumberFormatException if no valid task number is provided
+     */
     public int parseTaskNumber(String input) {
         String[] parts = input.trim().split(" ", 2);
 
@@ -22,6 +39,13 @@ public class Parser {
         return Integer.parseInt(parts[1].trim());
     }
 
+    /**
+     * Parses a todo command and creates a Todo task.
+     *
+     * @param input full todo command entered by the user
+     * @return Todo created from the command
+     * @throws IllegalArgumentException if the task description is empty
+     */
     public Todo parseTodo(String input) {
 
         String description =
@@ -36,6 +60,13 @@ public class Parser {
         return new Todo(description);
     }
 
+    /**
+     * Parses a deadline command and creates a Deadline task.
+     *
+     * @param input full deadline command entered by the user
+     * @return Deadline created from the command
+     * @throws IllegalArgumentException if the description or due date is missing
+     */
     public Deadline parseDeadline(String input) {
 
         String information =
@@ -71,6 +102,14 @@ public class Parser {
         return new Deadline(description, by);
     }
 
+    /**
+     * Parses an event command and creates an Event task.
+     *
+     * @param input full event command entered by the user
+     * @return Event created from the command
+     * @throws IllegalArgumentException if the description, start time,
+     *                                  or end time is missing
+     */
     public Event parseEvent(String input) {
 
         String information =
