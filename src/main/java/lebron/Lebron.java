@@ -3,6 +3,11 @@ package lebron;
 import java.io.IOException;
 import java.time.format.DateTimeParseException;
 
+/**
+ * Represents the main chatbot application.
+ * Coordinates user interaction, command parsing, task management,
+ * and storage of tasks.
+ */
 public class Lebron {
 
     private Storage storage;
@@ -10,6 +15,13 @@ public class Lebron {
     private Ui ui;
     private Parser parser;
 
+    /**
+     * Creates a Lebron chatbot and loads previously saved tasks
+     * from the specified storage location.
+     *
+     * @param folderName name of the folder containing the data file
+     * @param fileName name of the file used to store tasks
+     */
     public Lebron(String folderName, String fileName) {
 
         ui = new Ui();
@@ -38,6 +50,11 @@ public class Lebron {
         }
     }
 
+    /**
+     * Runs the main chatbot loop.
+     * Reads commands from the user and performs the corresponding actions
+     * until the user enters the bye command.
+     */
     public void run() {
 
         ui.showGreeting();
@@ -253,6 +270,11 @@ public class Lebron {
         }
     }
 
+    /**
+     * Starts the Lebron chatbot using the default data storage location.
+     *
+     * @param args command-line arguments
+     */
     public static void main(String[] args) {
 
         new Lebron(
