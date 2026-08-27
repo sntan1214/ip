@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Lebron {
@@ -8,6 +9,17 @@ public class Lebron {
 
         Task[] tasks = new Task[100];
         int taskCount = 0;
+
+        Storage storage = new Storage("data", "lebron.txt");
+
+        // LOAD SAVED TASKS
+        try {
+            taskCount = storage.loadTasks(tasks);
+        } catch (IOException e) {
+            System.out.println(
+                    "Lebron: I couldn't load your saved tasks."
+            );
+        }
 
         System.out.println("Hello! I'm Lebron");
         System.out.println("What can I do for you?");
@@ -24,33 +36,52 @@ public class Lebron {
                 }
 
                 // MARK
-            } else if (input.equals("mark") || input.startsWith("mark ")) {
+            } else if (input.equals("mark")
+                    || input.startsWith("mark ")) {
 
                 if (input.equals("mark")) {
+
                     System.out.println(
                             "Lebron: Tell me which task number to mark!"
                     );
 
                 } else {
+
                     try {
+
                         int taskNumber =
                                 Integer.parseInt(input.substring(5));
 
-                        if (taskNumber < 1 || taskNumber > taskCount) {
+                        if (taskNumber < 1
+                                || taskNumber > taskCount) {
+
                             System.out.println(
                                     "Lebron: That task number doesn't exist!"
                             );
 
                         } else {
+
                             tasks[taskNumber - 1].markAsDone();
 
                             System.out.println(
                                     "Nice! I've marked this task as done:"
                             );
-                            System.out.println(tasks[taskNumber - 1]);
+
+                            System.out.println(
+                                    tasks[taskNumber - 1]
+                            );
+
+                            try {
+                                storage.saveTasks(tasks, taskCount);
+                            } catch (IOException e) {
+                                System.out.println(
+                                        "Lebron: I couldn't save your tasks."
+                                );
+                            }
                         }
 
                     } catch (NumberFormatException e) {
+
                         System.out.println(
                                 "Lebron: Please give me a valid task number!"
                         );
@@ -62,16 +93,21 @@ public class Lebron {
                     || input.startsWith("delete ")) {
 
                 if (input.equals("delete")) {
+
                     System.out.println(
                             "Lebron: Tell me which task number to delete!"
                     );
 
                 } else {
+
                     try {
+
                         int taskNumber =
                                 Integer.parseInt(input.substring(7));
 
-                        if (taskNumber < 1 || taskNumber > taskCount) {
+                        if (taskNumber < 1
+                                || taskNumber > taskCount) {
+
                             System.out.println(
                                     "Lebron: That task number doesn't exist!"
                             );
@@ -94,6 +130,7 @@ public class Lebron {
                             System.out.println(
                                     "Alright, I've removed this task:"
                             );
+
                             System.out.println(deletedTask);
 
                             System.out.println(
@@ -101,9 +138,18 @@ public class Lebron {
                                             + taskCount
                                             + " tasks in the list."
                             );
+
+                            try {
+                                storage.saveTasks(tasks, taskCount);
+                            } catch (IOException e) {
+                                System.out.println(
+                                        "Lebron: I couldn't save your tasks."
+                                );
+                            }
                         }
 
                     } catch (NumberFormatException e) {
+
                         System.out.println(
                                 "Lebron: Please give me a valid task number!"
                         );
@@ -117,34 +163,51 @@ public class Lebron {
                 String description;
 
                 if (input.length() > 4) {
-                    description = input.substring(4).trim();
+                    description =
+                            input.substring(4).trim();
                 } else {
                     description = "";
                 }
 
                 if (description.isEmpty()) {
+
                     System.out.println(
                             "Lebron: You gotta tell me what the todo is!"
                     );
 
                 } else {
-                    tasks[taskCount] = new Todo(description);
+
+                    tasks[taskCount] =
+                            new Todo(description);
 
                     System.out.println(
                             "Got it. I've added this task:"
                     );
-                    System.out.println(tasks[taskCount]);
+
+                    System.out.println(
+                            tasks[taskCount]
+                    );
 
                     taskCount++;
+
+                    try {
+                        storage.saveTasks(tasks, taskCount);
+                    } catch (IOException e) {
+                        System.out.println(
+                                "Lebron: I couldn't save your tasks."
+                        );
+                    }
                 }
 
                 // DEADLINE
             } else if (input.equals("deadline")
                     || input.startsWith("deadline ")) {
 
-                int byIndex = input.indexOf(" /by ");
+                int byIndex =
+                        input.indexOf(" /by ");
 
                 if (byIndex == -1) {
+
                     System.out.println(
                             "Lebron: A deadline needs a /by time!"
                     );
@@ -158,25 +221,39 @@ public class Lebron {
                             input.substring(byIndex + 5).trim();
 
                     if (description.isEmpty()) {
+
                         System.out.println(
                                 "Lebron: A deadline needs a description!"
                         );
 
                     } else if (by.isEmpty()) {
+
                         System.out.println(
                                 "Lebron: You gotta tell me when it's due!"
                         );
 
                     } else {
+
                         tasks[taskCount] =
                                 new Deadline(description, by);
 
                         System.out.println(
                                 "Got it. I've added this task:"
                         );
-                        System.out.println(tasks[taskCount]);
+
+                        System.out.println(
+                                tasks[taskCount]
+                        );
 
                         taskCount++;
+
+                        try {
+                            storage.saveTasks(tasks, taskCount);
+                        } catch (IOException e) {
+                            System.out.println(
+                                    "Lebron: I couldn't save your tasks."
+                            );
+                        }
                     }
                 }
 
@@ -184,8 +261,11 @@ public class Lebron {
             } else if (input.equals("event")
                     || input.startsWith("event ")) {
 
-                int fromIndex = input.indexOf(" /from ");
-                int toIndex = input.indexOf(" /to ");
+                int fromIndex =
+                        input.indexOf(" /from ");
+
+                int toIndex =
+                        input.indexOf(" /to ");
 
                 if (fromIndex == -1
                         || toIndex == -1
@@ -210,25 +290,44 @@ public class Lebron {
                             input.substring(toIndex + 5).trim();
 
                     if (description.isEmpty()) {
+
                         System.out.println(
                                 "Lebron: An event needs a description!"
                         );
 
-                    } else if (from.isEmpty() || to.isEmpty()) {
+                    } else if (from.isEmpty()
+                            || to.isEmpty()) {
+
                         System.out.println(
                                 "Lebron: Tell me when the event starts and ends!"
                         );
 
                     } else {
+
                         tasks[taskCount] =
-                                new Event(description, from, to);
+                                new Event(
+                                        description,
+                                        from,
+                                        to
+                                );
 
                         System.out.println(
                                 "Got it. I've added this task:"
                         );
-                        System.out.println(tasks[taskCount]);
+
+                        System.out.println(
+                                tasks[taskCount]
+                        );
 
                         taskCount++;
+
+                        try {
+                            storage.saveTasks(tasks, taskCount);
+                        } catch (IOException e) {
+                            System.out.println(
+                                    "Lebron: I couldn't save your tasks."
+                            );
+                        }
                     }
                 }
 
