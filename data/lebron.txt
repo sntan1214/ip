@@ -1,3 +1,5 @@
 D | 1 | submit CS2103 | 2026-08-30
+E | 0 | basketball | 6pm | 8pm
+T | 0 | read book
 D | 0 | submit CS2103 | 2026-09-01
 E | 0 | basketball | 6pm | 8pm
