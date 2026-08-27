@@ -11,7 +11,7 @@ public class Ui {
     }
 
     public void showGreeting() {
-        System.out.println("Hello! I'm lebron.Lebron");
+        System.out.println("Hello! I'm Lebron");
         System.out.println("What can I do for you?");
     }
 
@@ -60,6 +60,14 @@ public class Ui {
         System.out.println(
                 "That's game. See you next time!"
         );
+    }
+
+    public void showMatchingTasks(TaskList tasks) {
+        System.out.println("Here are the matching tasks in your list:");
+
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println((i + 1) + ". " + tasks.get(i));
+        }
     }
 
     public void close() {

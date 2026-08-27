@@ -5,3 +5,6 @@ D | 0 | submit CS2103 | 2026-09-01
 E | 0 | basketball | 6pm | 8pm
 T | 0 | test jar
 D | 0 | submit CS2103 | 2026-09-01
+T | 0 | read book
+T | 0 | play basketball
+D | 0 | return book | 2026-09-01

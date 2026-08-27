@@ -15,26 +15,18 @@ public class Lebron {
         ui = new Ui();
         parser = new Parser();
 
-        storage =
-                new Storage(
-                        folderName,
-                        fileName
-                );
+        storage = new Storage(folderName, fileName);
 
         try {
+            tasks = storage.loadTasks();
 
-            tasks =
-                    storage.loadTasks();
-
-        } catch (IOException
-                 | DateTimeParseException e) {
+        } catch (IOException | DateTimeParseException e) {
 
             ui.showMessage(
-                    "lebron.Lebron: I couldn't load your saved tasks."
+                    "Lebron: I couldn't load your saved tasks."
             );
 
-            tasks =
-                    new TaskList();
+            tasks = new TaskList();
         }
     }
 
@@ -46,55 +38,48 @@ public class Lebron {
 
         while (isRunning) {
 
-            String input =
-                    ui.readCommand();
+            String input = ui.readCommand();
 
-            String command =
-                    parser.getCommand(input);
+            String command = parser.getCommand(input);
 
             switch (command) {
 
                 case "bye":
-
                     isRunning = false;
                     break;
 
                 case "list":
-
                     ui.showTaskList(tasks);
                     break;
 
-                case "mark":
+                case "find":
+                    findTasks(input);
+                    break;
 
+                case "mark":
                     markTask(input);
                     break;
 
                 case "delete":
-
                     deleteTask(input);
                     break;
 
                 case "todo":
-
                     addTodo(input);
                     break;
 
                 case "deadline":
-
                     addDeadline(input);
                     break;
 
                 case "event":
-
                     addEvent(input);
                     break;
 
                 default:
-
                     ui.showMessage(
-                            "lebron.Lebron: I don't know that command."
+                            "Lebron: I don't know that command."
                     );
-
                     break;
             }
         }
@@ -103,25 +88,38 @@ public class Lebron {
         ui.close();
     }
 
+    private void findTasks(String input) {
+
+        String keyword = input.substring(4).trim();
+
+        if (keyword.isEmpty()) {
+            ui.showMessage(
+                    "Lebron: Tell me what you want to find!"
+            );
+            return;
+        }
+
+        TaskList matchingTasks = tasks.find(keyword);
+
+        ui.showMatchingTasks(matchingTasks);
+    }
+
     private void markTask(String input) {
 
         try {
 
-            int taskNumber =
-                    parser.parseTaskNumber(input);
+            int taskNumber = parser.parseTaskNumber(input);
 
-            if (taskNumber < 1
-                    || taskNumber > tasks.size()) {
+            if (taskNumber < 1 || taskNumber > tasks.size()) {
 
                 ui.showMessage(
-                        "lebron.Lebron: That task number doesn't exist!"
+                        "Lebron: That task number doesn't exist!"
                 );
 
                 return;
             }
 
-            Task task =
-                    tasks.mark(taskNumber);
+            Task task = tasks.mark(taskNumber);
 
             ui.showMarkedTask(task);
 
@@ -130,7 +128,7 @@ public class Lebron {
         } catch (NumberFormatException e) {
 
             ui.showMessage(
-                    "lebron.Lebron: Please give me a valid task number!"
+                    "Lebron: Please give me a valid task number!"
             );
         }
     }
@@ -139,21 +137,18 @@ public class Lebron {
 
         try {
 
-            int taskNumber =
-                    parser.parseTaskNumber(input);
+            int taskNumber = parser.parseTaskNumber(input);
 
-            if (taskNumber < 1
-                    || taskNumber > tasks.size()) {
+            if (taskNumber < 1 || taskNumber > tasks.size()) {
 
                 ui.showMessage(
-                        "lebron.Lebron: That task number doesn't exist!"
+                        "Lebron: That task number doesn't exist!"
                 );
 
                 return;
             }
 
-            Task deletedTask =
-                    tasks.delete(taskNumber);
+            Task deletedTask = tasks.delete(taskNumber);
 
             ui.showDeletedTask(
                     deletedTask,
@@ -165,7 +160,7 @@ public class Lebron {
         } catch (NumberFormatException e) {
 
             ui.showMessage(
-                    "lebron.Lebron: Please give me a valid task number!"
+                    "Lebron: Please give me a valid task number!"
             );
         }
     }
@@ -174,8 +169,7 @@ public class Lebron {
 
         try {
 
-            Todo todo =
-                    parser.parseTodo(input);
+            Todo todo = parser.parseTodo(input);
 
             tasks.add(todo);
 
@@ -186,7 +180,7 @@ public class Lebron {
         } catch (IllegalArgumentException e) {
 
             ui.showMessage(
-                    "lebron.Lebron: " + e.getMessage()
+                    "Lebron: " + e.getMessage()
             );
         }
     }
@@ -195,8 +189,7 @@ public class Lebron {
 
         try {
 
-            Deadline deadline =
-                    parser.parseDeadline(input);
+            Deadline deadline = parser.parseDeadline(input);
 
             tasks.add(deadline);
 
@@ -207,13 +200,13 @@ public class Lebron {
         } catch (DateTimeParseException e) {
 
             ui.showMessage(
-                    "lebron.Lebron: Please enter the date as yyyy-MM-dd!"
+                    "Lebron: Please enter the date as yyyy-MM-dd!"
             );
 
         } catch (IllegalArgumentException e) {
 
             ui.showMessage(
-                    "lebron.Lebron: " + e.getMessage()
+                    "Lebron: " + e.getMessage()
             );
         }
     }
@@ -222,8 +215,7 @@ public class Lebron {
 
         try {
 
-            Event event =
-                    parser.parseEvent(input);
+            Event event = parser.parseEvent(input);
 
             tasks.add(event);
 
@@ -234,7 +226,7 @@ public class Lebron {
         } catch (IllegalArgumentException e) {
 
             ui.showMessage(
-                    "lebron.Lebron: " + e.getMessage()
+                    "Lebron: " + e.getMessage()
             );
         }
     }
@@ -248,7 +240,7 @@ public class Lebron {
         } catch (IOException e) {
 
             ui.showMessage(
-                    "lebron.Lebron: I couldn't save your tasks."
+                    "Lebron: I couldn't save your tasks."
             );
         }
     }
