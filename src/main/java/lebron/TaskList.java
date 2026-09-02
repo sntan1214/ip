@@ -78,6 +78,12 @@ public class TaskList {
         return deletedTask;
     }
 
+    /**
+     * Finds all tasks whose descriptions contain the given keyword.
+     *
+     * @param keyword keyword to search for
+     * @return task list containing all matching tasks
+     */
     public TaskList find(String keyword) {
         TaskList matchingTasks = new TaskList();
 
