@@ -44,4 +44,20 @@ public class TaskListTest {
                 markedTask.toString()
         );
     }
+
+    @Test
+    public void find_multipleKeywords_returnsMatchingTasks() {
+        TaskList tasks = new TaskList();
+
+        tasks.add(new Todo("read book"));
+        tasks.add(new Todo("play basketball"));
+        tasks.add(new Todo("buy groceries"));
+
+        TaskList results = tasks.find("book", "basketball");
+
+        assertEquals(2, results.size());
+        assertEquals("[T][ ] read book", results.get(0).toString());
+        assertEquals("[T][ ] play basketball", results.get(1).toString());
+    }
 }
+

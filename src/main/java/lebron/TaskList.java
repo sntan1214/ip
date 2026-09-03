@@ -79,21 +79,26 @@ public class TaskList {
     }
 
     /**
-     * Finds all tasks whose descriptions contain the given keyword.
+     * Finds all tasks whose descriptions contain any of the given keywords.
      *
-     * @param keyword keyword to search for
+     * @param keywords keywords to search for
      * @return task list containing all matching tasks
      */
-    public TaskList find(String keyword) {
+    public TaskList find(String... keywords) {
         TaskList matchingTasks = new TaskList();
 
         for (int i = 0; i < taskCount; i++) {
-            if (tasks[i].description.toLowerCase()
-                    .contains(keyword.toLowerCase())) {
-                matchingTasks.add(tasks[i]);
+            String description = tasks[i].description.toLowerCase();
+
+            for (String keyword : keywords) {
+                if (description.contains(keyword.toLowerCase())) {
+                    matchingTasks.add(tasks[i]);
+                    break;
+                }
             }
         }
 
         return matchingTasks;
     }
 }
+
