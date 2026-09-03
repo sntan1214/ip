@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.time.format.DateTimeParseException;
 
 /**
- * Represents the main chatbot application.
- * Coordinates user interaction, command parsing, task management,
- * and storage of tasks.
+ * Represents the Lebron chatbot.
  */
 public class Lebron {
 
@@ -16,262 +14,216 @@ public class Lebron {
     private Parser parser;
 
     /**
-     * Creates a Lebron chatbot and loads previously saved tasks
-     * from the specified storage location.
+     * Creates a Lebron chatbot and loads saved tasks.
      *
-     * @param folderName name of the folder containing the data file
-     * @param fileName name of the file used to store tasks
+     * @param folderName folder containing the data file
+     * @param fileName file used to store tasks
      */
     public Lebron(String folderName, String fileName) {
-
         ui = new Ui();
         parser = new Parser();
-
         storage = new Storage(folderName, fileName);
 
         try {
             tasks = storage.loadTasks();
-
         } catch (IOException | DateTimeParseException e) {
-
-            ui.showMessage(
-                    "Lebron: I couldn't load your saved tasks."
-            );
-
+            ui.showMessage("Lebron: I couldn't load your saved tasks.");
             tasks = new TaskList();
         }
     }
 
     /**
-     * Runs the main chatbot loop.
-     * Reads commands from the user and performs the corresponding actions
-     * until the user enters the bye command.
+     * Runs the text-based version of Lebron.
      */
     public void run() {
-
         ui.showGreeting();
 
         boolean isRunning = true;
 
         while (isRunning) {
-
             String input = ui.readCommand();
+            String response = getResponse(input);
 
-            String command = parser.getCommand(input);
+            ui.showMessage(response);
 
-            switch (command) {
-
-                case "bye":
-                    isRunning = false;
-                    break;
-
-                case "list":
-                    ui.showTaskList(tasks);
-                    break;
-
-                case "find":
-                    findTasks(input);
-                    break;
-
-                case "mark":
-                    markTask(input);
-                    break;
-
-                case "delete":
-                    deleteTask(input);
-                    break;
-
-                case "todo":
-                    addTodo(input);
-                    break;
-
-                case "deadline":
-                    addDeadline(input);
-                    break;
-
-                case "event":
-                    addEvent(input);
-                    break;
-
-                default:
-                    ui.showMessage(
-                            "Lebron: I don't know that command."
-                    );
-                    break;
+            if (parser.getCommand(input).equals("bye")) {
+                isRunning = false;
             }
         }
 
-        ui.showGoodbye();
         ui.close();
     }
 
-    private void findTasks(String input) {
+    /**
+     * Generates Lebron's response to a command.
+     *
+     * @param input command entered by the user
+     * @return Lebron's response
+     */
+    public String getResponse(String input) {
+        String command = parser.getCommand(input);
 
+        switch (command) {
+            case "bye":
+                return "That's game. See you next time!";
+
+            case "list":
+                return formatTaskList("Here are your tasks:", tasks);
+
+            case "find":
+                return findTasks(input);
+
+            case "mark":
+                return markTask(input);
+
+            case "delete":
+                return deleteTask(input);
+
+            case "todo":
+                return addTodo(input);
+
+            case "deadline":
+                return addDeadline(input);
+
+            case "event":
+                return addEvent(input);
+
+            default:
+                return "Lebron: I don't know that command.";
+        }
+    }
+
+    private String findTasks(String input) {
         String keyword = input.substring(4).trim();
 
         if (keyword.isEmpty()) {
-            ui.showMessage(
-                    "Lebron: Tell me what you want to find!"
-            );
-            return;
+            return "Lebron: Tell me what you want to find!";
         }
 
         TaskList matchingTasks = tasks.find(keyword);
 
-        ui.showMatchingTasks(matchingTasks);
+        return formatTaskList(
+                "Here are the matching tasks in your list:",
+                matchingTasks
+        );
     }
 
-    private void markTask(String input) {
-
+    private String markTask(String input) {
         try {
-
             int taskNumber = parser.parseTaskNumber(input);
 
             if (taskNumber < 1 || taskNumber > tasks.size()) {
-
-                ui.showMessage(
-                        "Lebron: That task number doesn't exist!"
-                );
-
-                return;
+                return "Lebron: That task number doesn't exist!";
             }
 
             Task task = tasks.mark(taskNumber);
 
-            ui.showMarkedTask(task);
-
-            saveTasks();
+            return saveAndReturn(
+                    "Nice! I've marked this task as done:\n" + task
+            );
 
         } catch (NumberFormatException e) {
-
-            ui.showMessage(
-                    "Lebron: Please give me a valid task number!"
-            );
+            return "Lebron: Please give me a valid task number!";
         }
     }
 
-    private void deleteTask(String input) {
-
+    private String deleteTask(String input) {
         try {
-
             int taskNumber = parser.parseTaskNumber(input);
 
             if (taskNumber < 1 || taskNumber > tasks.size()) {
-
-                ui.showMessage(
-                        "Lebron: That task number doesn't exist!"
-                );
-
-                return;
+                return "Lebron: That task number doesn't exist!";
             }
 
             Task deletedTask = tasks.delete(taskNumber);
 
-            ui.showDeletedTask(
-                    deletedTask,
-                    tasks.size()
+            return saveAndReturn(
+                    "Alright, I've removed this task:\n"
+                            + deletedTask
+                            + "\nNow you have "
+                            + tasks.size()
+                            + " tasks in the list."
             );
-
-            saveTasks();
 
         } catch (NumberFormatException e) {
-
-            ui.showMessage(
-                    "Lebron: Please give me a valid task number!"
-            );
+            return "Lebron: Please give me a valid task number!";
         }
     }
 
-    private void addTodo(String input) {
-
+    private String addTodo(String input) {
         try {
-
             Todo todo = parser.parseTodo(input);
-
             tasks.add(todo);
 
-            ui.showAddedTask(todo);
-
-            saveTasks();
+            return saveAndReturn(
+                    "Got it. I've added this task:\n" + todo
+            );
 
         } catch (IllegalArgumentException e) {
-
-            ui.showMessage(
-                    "Lebron: " + e.getMessage()
-            );
+            return "Lebron: " + e.getMessage();
         }
     }
 
-    private void addDeadline(String input) {
-
+    private String addDeadline(String input) {
         try {
-
             Deadline deadline = parser.parseDeadline(input);
-
             tasks.add(deadline);
 
-            ui.showAddedTask(deadline);
-
-            saveTasks();
+            return saveAndReturn(
+                    "Got it. I've added this task:\n" + deadline
+            );
 
         } catch (DateTimeParseException e) {
-
-            ui.showMessage(
-                    "Lebron: Please enter the date as yyyy-MM-dd!"
-            );
+            return "Lebron: Please enter the date as yyyy-MM-dd!";
 
         } catch (IllegalArgumentException e) {
-
-            ui.showMessage(
-                    "Lebron: " + e.getMessage()
-            );
+            return "Lebron: " + e.getMessage();
         }
     }
 
-    private void addEvent(String input) {
-
+    private String addEvent(String input) {
         try {
-
             Event event = parser.parseEvent(input);
-
             tasks.add(event);
 
-            ui.showAddedTask(event);
-
-            saveTasks();
+            return saveAndReturn(
+                    "Got it. I've added this task:\n" + event
+            );
 
         } catch (IllegalArgumentException e) {
-
-            ui.showMessage(
-                    "Lebron: " + e.getMessage()
-            );
+            return "Lebron: " + e.getMessage();
         }
     }
 
-    private void saveTasks() {
+    private String formatTaskList(String heading, TaskList taskList) {
+        StringBuilder result = new StringBuilder(heading);
 
+        for (int i = 0; i < taskList.size(); i++) {
+            result.append("\n")
+                    .append(i + 1)
+                    .append(". ")
+                    .append(taskList.get(i));
+        }
+
+        return result.toString();
+    }
+
+    private String saveAndReturn(String response) {
         try {
-
             storage.saveTasks(tasks);
+            return response;
 
         } catch (IOException e) {
-
-            ui.showMessage(
-                    "Lebron: I couldn't save your tasks."
-            );
+            return response + "\nLebron: I couldn't save your tasks.";
         }
     }
 
     /**
-     * Starts the Lebron chatbot using the default data storage location.
+     * Starts the text-based version of Lebron.
      *
      * @param args command-line arguments
      */
     public static void main(String[] args) {
-
-        new Lebron(
-                "data",
-                "lebron.txt"
-        ).run();
+        new Lebron("data", "lebron.txt").run();
     }
 }
