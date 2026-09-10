@@ -18,6 +18,16 @@ import javafx.util.Duration;
  */
 public class Main extends Application {
 
+    private static final double WINDOW_WIDTH = 400.0;
+    private static final double WINDOW_HEIGHT = 600.0;
+    private static final double CHAT_WIDTH = 398.0;
+    private static final double CHAT_HEIGHT = 535.0;
+    private static final double INPUT_WIDTH = 325.0;
+    private static final double SEND_BUTTON_WIDTH = 70.0;
+    private static final double EDGE_OFFSET = 1.0;
+    private static final double DIALOG_SPACING = 10.0;
+    private static final double EXIT_DELAY_MILLISECONDS = 700.0;
+
     private ScrollPane scrollPane;
     private VBox dialogContainer;
     private TextField userInput;
@@ -28,76 +38,105 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-        scrollPane = new ScrollPane();
+        initialiseControls();
 
+        AnchorPane mainLayout = createMainLayout();
+
+        configureStage(stage, mainLayout);
+        showGreeting();
+
+        stage.show();
+    }
+
+    /**
+     * Initialises and configures the controls used in the GUI.
+     */
+    private void initialiseControls() {
         dialogContainer = new VBox();
-        dialogContainer.setSpacing(10);
+        dialogContainer.setSpacing(DIALOG_SPACING);
+        dialogContainer.setPrefHeight(Region.USE_COMPUTED_SIZE);
 
+        scrollPane = new ScrollPane();
         scrollPane.setContent(dialogContainer);
+        scrollPane.setPrefSize(CHAT_WIDTH, CHAT_HEIGHT);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scrollPane.setFitToWidth(true);
 
         userInput = new TextField();
         userInput.setPromptText("Enter command here...");
+        userInput.setPrefWidth(INPUT_WIDTH);
 
         sendButton = new Button("Send");
+        sendButton.setPrefWidth(SEND_BUTTON_WIDTH);
 
-        AnchorPane mainLayout = new AnchorPane();
+        configureEventHandlers();
+    }
 
-        mainLayout.getChildren().addAll(
-                scrollPane,
-                userInput,
-                sendButton
-        );
-
-        Scene scene = new Scene(mainLayout);
-
-        stage.setTitle("Lebron");
-        stage.setResizable(false);
-        stage.setMinHeight(600.0);
-        stage.setMinWidth(400.0);
-
-        mainLayout.setPrefSize(400.0, 600.0);
-
-        scrollPane.setPrefSize(398.0, 535.0);
-        scrollPane.setHbarPolicy(
-                ScrollPane.ScrollBarPolicy.NEVER
-        );
-        scrollPane.setVbarPolicy(
-                ScrollPane.ScrollBarPolicy.ALWAYS
-        );
-
-        scrollPane.setFitToWidth(true);
-
-        dialogContainer.setPrefHeight(
-                Region.USE_COMPUTED_SIZE
-        );
-
-        userInput.setPrefWidth(325.0);
-        sendButton.setPrefWidth(70.0);
-
-        AnchorPane.setTopAnchor(scrollPane, 1.0);
-        AnchorPane.setLeftAnchor(scrollPane, 1.0);
-
-        AnchorPane.setLeftAnchor(userInput, 1.0);
-        AnchorPane.setBottomAnchor(userInput, 1.0);
-
-        AnchorPane.setRightAnchor(sendButton, 1.0);
-        AnchorPane.setBottomAnchor(sendButton, 1.0);
-
+    /**
+     * Configures actions triggered by the GUI controls.
+     */
+    private void configureEventHandlers() {
         sendButton.setOnAction(event -> handleUserInput());
         userInput.setOnAction(event -> handleUserInput());
 
         dialogContainer.heightProperty().addListener(
                 observable -> scrollPane.setVvalue(1.0)
         );
+    }
 
+    /**
+     * Creates and positions the main application layout.
+     *
+     * @return configured main layout
+     */
+    private AnchorPane createMainLayout() {
+        AnchorPane mainLayout = new AnchorPane();
+
+        mainLayout.setPrefSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+        mainLayout.getChildren().addAll(
+                scrollPane,
+                userInput,
+                sendButton
+        );
+
+        AnchorPane.setTopAnchor(scrollPane, EDGE_OFFSET);
+        AnchorPane.setLeftAnchor(scrollPane, EDGE_OFFSET);
+
+        AnchorPane.setLeftAnchor(userInput, EDGE_OFFSET);
+        AnchorPane.setBottomAnchor(userInput, EDGE_OFFSET);
+
+        AnchorPane.setRightAnchor(sendButton, EDGE_OFFSET);
+        AnchorPane.setBottomAnchor(sendButton, EDGE_OFFSET);
+
+        return mainLayout;
+    }
+
+    /**
+     * Configures the application's main window.
+     *
+     * @param stage application stage
+     * @param mainLayout main application layout
+     */
+    private void configureStage(Stage stage, AnchorPane mainLayout) {
+        Scene scene = new Scene(mainLayout);
+
+        stage.setTitle("Lebron");
+        stage.setResizable(false);
+        stage.setMinHeight(WINDOW_HEIGHT);
+        stage.setMinWidth(WINDOW_WIDTH);
+        stage.setScene(scene);
+    }
+
+    /**
+     * Displays Lebron's greeting when the application starts.
+     */
+    private void showGreeting() {
         dialogContainer.getChildren().add(
                 DialogBox.getLebronDialog(
                         "Hello! I'm Lebron.\nWhat can I do for you?"
                 )
         );
-
-        stage.setScene(scene);
-        stage.show();
     }
 
     /**
@@ -120,11 +159,20 @@ public class Main extends Application {
         userInput.clear();
 
         if (input.equals("bye")) {
-            PauseTransition delay =
-                    new PauseTransition(Duration.millis(700));
-
-            delay.setOnFinished(event -> Platform.exit());
-            delay.play();
+            exitAfterDelay();
         }
+    }
+
+    /**
+     * Closes the application after allowing the goodbye message to display.
+     */
+    private void exitAfterDelay() {
+        PauseTransition delay =
+                new PauseTransition(
+                        Duration.millis(EXIT_DELAY_MILLISECONDS)
+                );
+
+        delay.setOnFinished(event -> Platform.exit());
+        delay.play();
     }
 }
