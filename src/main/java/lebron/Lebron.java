@@ -70,6 +70,9 @@ public class Lebron {
             case "list":
                 return formatTaskList("Here are your tasks:", tasks);
 
+            case "sort":
+                return sortTasks();
+
             case "find":
                 return findTasks(input);
 
@@ -219,6 +222,22 @@ public class Lebron {
     }
 
     /**
+     * Sorts the task list alphabetically and saves the new order.
+     *
+     * @return response showing the sorted task list
+     */
+    private String sortTasks() {
+        tasks.sort();
+
+        return saveAndReturn(
+                formatTaskList(
+                        "I've sorted your tasks alphabetically:",
+                        tasks
+                )
+        );
+    }
+
+    /**
      * Starts the text-based version of Lebron.
      *
      * @param args command-line arguments
@@ -227,3 +246,4 @@ public class Lebron {
         new Lebron("data", "lebron.txt").run();
     }
 }
+

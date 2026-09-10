@@ -59,5 +59,21 @@ public class TaskListTest {
         assertEquals("[T][ ] read book", results.get(0).toString());
         assertEquals("[T][ ] play basketball", results.get(1).toString());
     }
+
+    @Test
+    public void sort_unsortedTasks_returnsAlphabeticalOrder() {
+        TaskList tasks = new TaskList();
+
+        tasks.add(new Todo("wash clothes"));
+        tasks.add(new Todo("buy groceries"));
+        tasks.add(new Todo("read book"));
+
+        tasks.sort();
+
+        assertEquals("[T][ ] buy groceries", tasks.get(0).toString());
+        assertEquals("[T][ ] read book", tasks.get(1).toString());
+        assertEquals("[T][ ] wash clothes", tasks.get(2).toString());
+    }
 }
+
 

@@ -1,5 +1,6 @@
 package lebron;
 import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * Manages the collection of tasks stored by the chatbot.
@@ -110,6 +111,21 @@ public class TaskList {
 
         return matchingTasks;
     }
+
+    /**
+     * Sorts tasks alphabetically by their descriptions.
+     */
+    public void sort() {
+        Arrays.sort(
+                tasks,
+                0,
+                taskCount,
+                Comparator.comparing(
+                        task -> task.description.toLowerCase()
+                )
+        );
+    }
 }
+
 
 
