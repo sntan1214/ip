@@ -1,4 +1,5 @@
 package lebron;
+import java.util.Arrays;
 
 /**
  * Manages the collection of tasks stored by the chatbot.
@@ -87,18 +88,14 @@ public class TaskList {
     public TaskList find(String... keywords) {
         TaskList matchingTasks = new TaskList();
 
-        for (int i = 0; i < taskCount; i++) {
-            String description = tasks[i].description.toLowerCase();
-
-            for (String keyword : keywords) {
-                if (description.contains(keyword.toLowerCase())) {
-                    matchingTasks.add(tasks[i]);
-                    break;
-                }
-            }
-        }
+        Arrays.stream(tasks, 0, taskCount)
+                .filter(task -> Arrays.stream(keywords)
+                        .anyMatch(keyword -> task.description.toLowerCase()
+                                .contains(keyword.toLowerCase())))
+                .forEach(matchingTasks::add);
 
         return matchingTasks;
     }
 }
+
 
