@@ -22,6 +22,9 @@ public class TaskList {
      * @param task task to add
      */
     public void add(Task task) {
+        assert task != null : "Task to add should not be null";
+        assert taskCount < tasks.length : "Task list should not exceed capacity";
+
         tasks[taskCount] = task;
         taskCount++;
     }
@@ -33,6 +36,9 @@ public class TaskList {
      * @return task at the specified index
      */
     public Task get(int index) {
+        assert index >= 0 && index < taskCount
+                : "Task index should be within the task list";
+
         return tasks[index];
     }
 
@@ -52,6 +58,9 @@ public class TaskList {
      * @return task that was marked as done
      */
     public Task mark(int taskNumber) {
+        assert taskNumber >= 1 && taskNumber <= taskCount
+                : "Task number should be valid";
+
         Task task = tasks[taskNumber - 1];
         task.markAsDone();
         return task;
@@ -65,6 +74,9 @@ public class TaskList {
      * @return task that was deleted
      */
     public Task delete(int taskNumber) {
+        assert taskNumber >= 1 && taskNumber <= taskCount
+                : "Task number should be valid";
+
         int index = taskNumber - 1;
         Task deletedTask = tasks[index];
 
@@ -85,6 +97,8 @@ public class TaskList {
      * @return task list containing all matching tasks
      */
     public TaskList find(String... keywords) {
+        assert keywords != null : "Keywords should not be null";
+
         TaskList matchingTasks = new TaskList();
 
         for (int i = 0; i < taskCount; i++) {
@@ -101,4 +115,5 @@ public class TaskList {
         return matchingTasks;
     }
 }
+
 
