@@ -3,6 +3,7 @@ package lebron;
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -54,6 +55,10 @@ public class Main extends Application {
     private void initialiseControls() {
         dialogContainer = new VBox();
         dialogContainer.setSpacing(DIALOG_SPACING);
+        dialogContainer.setPadding(new Insets(12));
+        dialogContainer.setStyle(
+                "-fx-background-color: #fffaf0;"
+        );
         dialogContainer.setPrefHeight(Region.USE_COMPUTED_SIZE);
 
         scrollPane = new ScrollPane();
@@ -64,11 +69,24 @@ public class Main extends Application {
         scrollPane.setFitToWidth(true);
 
         userInput = new TextField();
-        userInput.setPromptText("Enter command here...");
+        userInput.setPromptText("Enter your next play...");
         userInput.setPrefWidth(INPUT_WIDTH);
+        userInput.setStyle(
+                "-fx-font-size: 13px;"
+                        + "-fx-padding: 8;"
+                        + "-fx-background-radius: 8;"
+                        + "-fx-border-color: #FDB927;"
+                        + "-fx-border-radius: 8;"
+        );
 
-        sendButton = new Button("Send");
+        sendButton = new Button("SEND");
         sendButton.setPrefWidth(SEND_BUTTON_WIDTH);
+        sendButton.setStyle(
+                "-fx-background-color: #FDB927;"
+                        + "-fx-text-fill: #552583;"
+                        + "-fx-font-weight: bold;"
+                        + "-fx-background-radius: 8;"
+        );
 
         configureEventHandlers();
     }
@@ -94,6 +112,10 @@ public class Main extends Application {
         AnchorPane mainLayout = new AnchorPane();
 
         mainLayout.setPrefSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+        mainLayout.setStyle(
+                "-fx-background-color: #fffaf0;"
+        );
+
         mainLayout.getChildren().addAll(
                 scrollPane,
                 userInput,
@@ -121,7 +143,7 @@ public class Main extends Application {
     private void configureStage(Stage stage, AnchorPane mainLayout) {
         Scene scene = new Scene(mainLayout);
 
-        stage.setTitle("Lebron");
+        stage.setTitle("Lebron 🏀");
         stage.setResizable(false);
         stage.setMinHeight(WINDOW_HEIGHT);
         stage.setMinWidth(WINDOW_WIDTH);
