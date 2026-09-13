@@ -1,9 +1,7 @@
 package lebron;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 
@@ -12,6 +10,28 @@ import javafx.scene.layout.HBox;
  */
 public class DialogBox extends HBox {
 
+    private static final double MESSAGE_WIDTH = 260.0;
+
+    private static final String USER_STYLE =
+            "-fx-background-color: #552583;"
+                    + "-fx-text-fill: white;"
+                    + "-fx-background-radius: 14;"
+                    + "-fx-padding: 10;"
+                    + "-fx-font-size: 13px;";
+
+    private static final String LEBRON_STYLE =
+            "-fx-background-color: #FDB927;"
+                    + "-fx-text-fill: #2b2b2b;"
+                    + "-fx-background-radius: 14;"
+                    + "-fx-padding: 10;"
+                    + "-fx-font-size: 13px;";
+
+    private static final String AVATAR_STYLE =
+            "-fx-background-color: #552583;"
+                    + "-fx-background-radius: 20;"
+                    + "-fx-padding: 7;"
+                    + "-fx-font-size: 16px;";
+
     private final Label text;
 
     /**
@@ -19,30 +39,14 @@ public class DialogBox extends HBox {
      *
      * @param text message to display
      */
-    public DialogBox(String text) {
+    private DialogBox(String text) {
         this.text = new Label(text);
 
         this.text.setWrapText(true);
-        this.text.setMaxWidth(280);
+        this.text.setMaxWidth(MESSAGE_WIDTH);
 
-        this.setSpacing(10);
-        this.setAlignment(Pos.TOP_RIGHT);
-
-        this.getChildren().add(this.text);
-    }
-
-    /**
-     * Flips the dialog box to the left side.
-     */
-    private void flip() {
-        this.setAlignment(Pos.TOP_LEFT);
-
-        ObservableList<Node> children =
-                FXCollections.observableArrayList(this.getChildren());
-
-        FXCollections.reverse(children);
-
-        this.getChildren().setAll(children);
+        this.setSpacing(8);
+        this.setPadding(new Insets(4, 10, 4, 10));
     }
 
     /**
@@ -52,7 +56,25 @@ public class DialogBox extends HBox {
      * @return user dialog box
      */
     public static DialogBox getUserDialog(String text) {
-        return new DialogBox(text);
+        DialogBox dialogBox = new DialogBox(text);
+
+        Label avatar = new Label("YOU");
+        avatar.setStyle(
+                "-fx-text-fill: #552583;"
+                        + "-fx-font-size: 10px;"
+                        + "-fx-font-weight: bold;"
+                        + "-fx-padding: 7;"
+        );
+
+        dialogBox.text.setStyle(USER_STYLE);
+        dialogBox.setAlignment(Pos.TOP_RIGHT);
+
+        dialogBox.getChildren().addAll(
+                dialogBox.text,
+                avatar
+        );
+
+        return dialogBox;
     }
 
     /**
@@ -63,7 +85,19 @@ public class DialogBox extends HBox {
      */
     public static DialogBox getLebronDialog(String text) {
         DialogBox dialogBox = new DialogBox(text);
-        dialogBox.flip();
+
+        Label avatar = new Label("🏀");
+        avatar.setStyle(AVATAR_STYLE);
+
+        dialogBox.text.setStyle(LEBRON_STYLE);
+        dialogBox.setAlignment(Pos.TOP_LEFT);
+
+        dialogBox.getChildren().addAll(
+                avatar,
+                dialogBox.text
+        );
+
         return dialogBox;
     }
 }
+
