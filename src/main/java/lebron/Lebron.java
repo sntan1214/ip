@@ -26,8 +26,15 @@ public class Lebron {
 
         try {
             tasks = storage.loadTasks();
-        } catch (IOException | DateTimeParseException e) {
-            ui.showMessage("Lebron: I couldn't load your saved tasks.");
+        } catch (IOException
+                 | DateTimeParseException
+                 | IllegalArgumentException e) {
+
+            ui.showMessage(
+                    "Lebron: I couldn't read the saved task data. "
+                            + "I'll start with an empty list."
+            );
+
             tasks = new TaskList();
         }
     }
@@ -46,7 +53,8 @@ public class Lebron {
 
             ui.showMessage(response);
 
-            if (parser.getCommand(input).equals("bye")) {
+            if (parser.getCommand(input).equals("bye")
+                    && !parser.hasArguments(input)) {
                 isRunning = false;
             }
         }
@@ -64,13 +72,31 @@ public class Lebron {
         String command = parser.getCommand(input);
 
         switch (command) {
+            case "":
+                return "Lebron: Enter a command so I know the next play!";
+
             case "bye":
+                if (parser.hasArguments(input)) {
+                    return "Lebron: Just type 'bye' to leave the court!";
+                }
+
                 return "That's game. See you next time!";
 
             case "list":
-                return formatTaskList("Here are your tasks:", tasks);
+                if (parser.hasArguments(input)) {
+                    return "Lebron: Use 'list' without anything after it.";
+                }
+
+                return formatTaskList(
+                        "Here are your tasks:",
+                        tasks
+                );
 
             case "sort":
+                if (parser.hasArguments(input)) {
+                    return "Lebron: Use 'sort' without anything after it.";
+                }
+
                 return sortTasks();
 
             case "find":
@@ -92,10 +118,18 @@ public class Lebron {
                 return addEvent(input);
 
             default:
-                return "Lebron: I don't know that command.";
+                return "Lebron: I don't know that command.\n"
+                        + "Try todo, deadline, event, list, find, mark, "
+                        + "delete, sort, or bye.";
         }
     }
 
+    /**
+     * Finds tasks containing the specified keyword.
+     *
+     * @param input find command entered by the user
+     * @return response containing matching tasks
+     */
     private String findTasks(String input) {
         String keyword = input.substring(4).trim();
 
@@ -105,12 +139,22 @@ public class Lebron {
 
         TaskList matchingTasks = tasks.find(keyword);
 
+        if (matchingTasks.size() == 0) {
+            return "Lebron: I couldn't find any matching tasks.";
+        }
+
         return formatTaskList(
                 "Here are the matching tasks in your list:",
                 matchingTasks
         );
     }
 
+    /**
+     * Marks a specified task as completed.
+     *
+     * @param input mark command entered by the user
+     * @return response describing the result
+     */
     private String markTask(String input) {
         try {
             int taskNumber = parser.parseTaskNumber(input);
@@ -126,10 +170,17 @@ public class Lebron {
             );
 
         } catch (NumberFormatException e) {
-            return "Lebron: Please give me a valid task number!";
+            return "Lebron: Give me one valid task number, "
+                    + "for example 'mark 2'.";
         }
     }
 
+    /**
+     * Deletes a specified task.
+     *
+     * @param input delete command entered by the user
+     * @return response describing the result
+     */
     private String deleteTask(String input) {
         try {
             int taskNumber = parser.parseTaskNumber(input);
@@ -149,10 +200,17 @@ public class Lebron {
             );
 
         } catch (NumberFormatException e) {
-            return "Lebron: Please give me a valid task number!";
+            return "Lebron: Give me one valid task number, "
+                    + "for example 'delete 2'.";
         }
     }
 
+    /**
+     * Adds a todo task.
+     *
+     * @param input todo command entered by the user
+     * @return response describing the result
+     */
     private String addTodo(String input) {
         try {
             Todo todo = parser.parseTodo(input);
@@ -167,6 +225,12 @@ public class Lebron {
         }
     }
 
+    /**
+     * Adds a deadline task.
+     *
+     * @param input deadline command entered by the user
+     * @return response describing the result
+     */
     private String addDeadline(String input) {
         try {
             Deadline deadline = parser.parseDeadline(input);
@@ -177,13 +241,20 @@ public class Lebron {
             );
 
         } catch (DateTimeParseException e) {
-            return "Lebron: Please enter the date as yyyy-MM-dd!";
+            return "Lebron: Enter a valid date as yyyy-MM-dd, "
+                    + "for example 2026-09-18.";
 
         } catch (IllegalArgumentException e) {
             return "Lebron: " + e.getMessage();
         }
     }
 
+    /**
+     * Adds an event task.
+     *
+     * @param input event command entered by the user
+     * @return response describing the result
+     */
     private String addEvent(String input) {
         try {
             Event event = parser.parseEvent(input);
@@ -198,7 +269,21 @@ public class Lebron {
         }
     }
 
-    private String formatTaskList(String heading, TaskList taskList) {
+    /**
+     * Formats a task list for display.
+     *
+     * @param heading heading to display before the tasks
+     * @param taskList task list to format
+     * @return formatted task list
+     */
+    private String formatTaskList(
+            String heading,
+            TaskList taskList) {
+
+        if (taskList.size() == 0) {
+            return heading + "\nNo tasks on the board.";
+        }
+
         StringBuilder result = new StringBuilder(heading);
 
         for (int i = 0; i < taskList.size(); i++) {
@@ -211,13 +296,21 @@ public class Lebron {
         return result.toString();
     }
 
+    /**
+     * Saves the task list and returns the supplied response.
+     *
+     * @param response response to return after saving
+     * @return supplied response, with an error message if saving fails
+     */
     private String saveAndReturn(String response) {
         try {
             storage.saveTasks(tasks);
             return response;
 
         } catch (IOException e) {
-            return response + "\nLebron: I couldn't save your tasks.";
+            return response
+                    + "\nLebron: The play worked, but I couldn't "
+                    + "save the task data.";
         }
     }
 
@@ -227,6 +320,10 @@ public class Lebron {
      * @return response showing the sorted task list
      */
     private String sortTasks() {
+        if (tasks.size() == 0) {
+            return "Lebron: There aren't any tasks to sort yet!";
+        }
+
         tasks.sort();
 
         return saveAndReturn(
@@ -246,4 +343,3 @@ public class Lebron {
         new Lebron("data", "lebron.txt").run();
     }
 }
-
