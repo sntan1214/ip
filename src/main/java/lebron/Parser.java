@@ -1,5 +1,7 @@
 package lebron;
 
+import java.util.Locale;
+
 /**
  * Parses user input into commands and task information
  * that can be used by the Lebron chatbot.
@@ -19,7 +21,25 @@ public class Parser {
             return "";
         }
 
-        return trimmedInput.split(" ", 2)[0];
+        return trimmedInput
+                .split("\\s+", 2)[0]
+                .toLowerCase(Locale.ROOT);
+    }
+
+    /**
+     * Returns whether a command contains arguments after the command word.
+     *
+     * @param input full command entered by the user
+     * @return true if arguments are present
+     */
+    public boolean hasArguments(String input) {
+        String trimmedInput = input.trim();
+
+        if (trimmedInput.isEmpty()) {
+            return false;
+        }
+
+        return trimmedInput.split("\\s+", 2).length > 1;
     }
 
     /**
@@ -30,9 +50,9 @@ public class Parser {
      * @throws NumberFormatException if no valid task number is provided
      */
     public int parseTaskNumber(String input) {
-        String[] parts = input.trim().split(" ", 2);
+        String[] parts = input.trim().split("\\s+", 2);
 
-        if (parts.length < 2) {
+        if (parts.length < 2 || parts[1].trim().isEmpty()) {
             throw new NumberFormatException();
         }
 
@@ -47,9 +67,7 @@ public class Parser {
      * @throws IllegalArgumentException if the task description is empty
      */
     public Todo parseTodo(String input) {
-
-        String description =
-                input.substring(4).trim();
+        String description = input.substring(4).trim();
 
         if (description.isEmpty()) {
             throw new IllegalArgumentException(
@@ -68,12 +86,15 @@ public class Parser {
      * @throws IllegalArgumentException if the description or due date is missing
      */
     public Deadline parseDeadline(String input) {
+        String information = input.substring(8).trim();
 
-        String information =
-                input.substring(8).trim();
+        if (information.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "A deadline needs a description and a /by date!"
+            );
+        }
 
-        int byIndex =
-                information.indexOf(" /by ");
+        int byIndex = information.indexOf("/by");
 
         if (byIndex == -1) {
             throw new IllegalArgumentException(
@@ -85,7 +106,7 @@ public class Parser {
                 information.substring(0, byIndex).trim();
 
         String by =
-                information.substring(byIndex + 5).trim();
+                information.substring(byIndex + 3).trim();
 
         if (description.isEmpty()) {
             throw new IllegalArgumentException(
@@ -111,22 +132,26 @@ public class Parser {
      *                                  or end time is missing
      */
     public Event parseEvent(String input) {
+        String information = input.substring(5).trim();
 
-        String information =
-                input.substring(5).trim();
+        if (information.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "An event needs a description, /from, and /to!"
+            );
+        }
 
-        int fromIndex =
-                information.indexOf(" /from ");
+        int fromIndex = information.indexOf("/from");
+        int toIndex = information.indexOf("/to");
 
-        int toIndex =
-                information.indexOf(" /to ");
-
-        if (fromIndex == -1
-                || toIndex == -1
-                || toIndex < fromIndex) {
-
+        if (fromIndex == -1 || toIndex == -1) {
             throw new IllegalArgumentException(
                     "An event needs both /from and /to!"
+            );
+        }
+
+        if (toIndex < fromIndex) {
+            throw new IllegalArgumentException(
+                    "Put /from before /to!"
             );
         }
 
@@ -138,13 +163,13 @@ public class Parser {
 
         String from =
                 information.substring(
-                        fromIndex + 7,
+                        fromIndex + 5,
                         toIndex
                 ).trim();
 
         String to =
                 information.substring(
-                        toIndex + 5
+                        toIndex + 3
                 ).trim();
 
         if (description.isEmpty()) {
@@ -153,9 +178,15 @@ public class Parser {
             );
         }
 
-        if (from.isEmpty() || to.isEmpty()) {
+        if (from.isEmpty()) {
             throw new IllegalArgumentException(
-                    "Tell me when the event starts and ends!"
+                    "Tell me when the event starts!"
+            );
+        }
+
+        if (to.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Tell me when the event ends!"
             );
         }
 
